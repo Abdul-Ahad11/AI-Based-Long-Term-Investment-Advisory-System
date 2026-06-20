@@ -100,7 +100,7 @@ pip install -r requirements.txt
 Run the FastAPI server:
 
 ```bash
-uvicorn main:app --reload
+uvicorn api:app --reload
 ```
 
 Open the application in your browser and start analyzing investment opportunities.
