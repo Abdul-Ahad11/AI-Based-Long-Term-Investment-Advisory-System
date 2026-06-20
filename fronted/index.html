@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Investment DSS — Global Engine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="top-header">
+    <div class="brand">
+      <div class="brand-mark"><i class="fa-solid fa-chart-line"></i></div>
+      <div>
+        <h1>AI Investment DSS</h1>
+        <p class="brand-sub">Global Portfolio Optimization Engine</p>
+      </div>
+    </div>
+    <div class="header-meta">
+      <div class="status-pill"><span class="status-dot"></span> System Online</div>
+      <div class="clock" id="clock">—</div>
+    </div>
+  </header>
+
+  <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle Sidebar"><i class="fa-solid fa-bars"></i></button>
+  <div class="overlay" id="overlay"></div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h2><i class="fa-solid fa-user-gear"></i> Investor Profile</h2>
+      <p class="sidebar-sub">Define your constraints for the AI.</p>
+    </div>
+
+    <div class="sidebar-body">
+      <div class="form-group">
+        <label for="investmentAmount">Investment Capital (USD)</label>
+        <div class="number-input-wrapper">
+          <button class="num-btn" id="decreaseBtn">−</button>
+          <input type="number" id="investmentAmount" min="10000" step="10000" value="100000" />
+          <button class="num-btn" id="increaseBtn">+</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="duration">Investment Horizon</label>
+        <select id="duration">
+          <option>1 Year</option>
+          <option>3 Years</option>
+          <option selected>5 Years</option>
+          <option>10 Years</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="riskProfile">Risk Profile</label>
+        <select id="riskProfile">
+          <option value="Conservative">Conservative</option>
+          <option value="Moderate" selected>Moderate</option>
+          <option value="Aggressive">Aggressive</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Risk Appetite (granular)</label>
+        <div class="risk-slider-wrapper">
+          <input type="range" id="riskSlider" min="0" max="2" step="1" value="1" />
+          <div class="risk-labels"><span>Low</span><span>Medium</span><span>High</span></div>
+          <div class="risk-display" id="riskDisplay">Medium</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Target Expected Return (%)</label>
+        <div class="slider-wrapper">
+          <input type="range" id="targetReturn" min="10" max="50" step="1" value="30" />
+          <div class="slider-value" id="targetReturnValue">30</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="section-label">Sector Preferences</label>
+      </div>
+
+      <div class="form-group">
+        <label>Preferred Sectors (Bonus)</label>
+        <div class="multiselect" id="preferredSectors">
+          <div class="multiselect-selected" id="preferredSelected"></div>
+          <div class="multiselect-dropdown" id="preferredDropdown">
+            <label><input type="checkbox" value="Technology" checked /> Technology</label>
+            <label><input type="checkbox" value="Finance" /> Finance</label>
+            <label><input type="checkbox" value="Healthcare" /> Healthcare</label>
+            <label><input type="checkbox" value="Energy" /> Energy</label>
+            <label><input type="checkbox" value="Consumer" /> Consumer</label>
+            <label><input type="checkbox" value="Staples" /> Staples</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Excluded Sectors (Penalty)</label>
+        <div class="multiselect" id="excludedSectors">
+          <div class="multiselect-selected" id="excludedSelected"></div>
+          <div class="multiselect-dropdown" id="excludedDropdown">
+            <label><input type="checkbox" value="Technology" /> Technology</label>
+            <label><input type="checkbox" value="Finance" /> Finance</label>
+            <label><input type="checkbox" value="Healthcare" /> Healthcare</label>
+            <label><input type="checkbox" value="Energy" /> Energy</label>
+            <label><input type="checkbox" value="Consumer" /> Consumer</label>
+            <label><input type="checkbox" value="Staples" /> Staples</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-actions">
+        <button class="btn-secondary" id="resetBtn"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content" id="mainContent">
+    <div class="main-inner">
+
+      <div class="page-title-row">
+        <div>
+          <h1 class="main-title"><i class="fa-solid fa-robot"></i> AI-Based Long-Term Investment Advisory</h1>
+          <h3 class="main-subtitle">Global Portfolio Optimization Engine — Heuristics → XAI → Search Algorithms</h3>
+        </div>
+        <button class="run-btn" id="runBtn"><i class="fa-solid fa-rocket"></i> Run AI Pipeline</button>
+      </div>
+
+      <section class="pipeline-tracker card-block" id="pipelineTracker" aria-label="Pipeline progress">
+        <div class="pipeline-steps">
+          <div class="pipe-step" data-step="0"><div class="pipe-icon"><i class="fa-solid fa-database"></i></div><span>Data Collection</span></div>
+          <div class="pipe-step" data-step="1"><div class="pipe-icon"><i class="fa-solid fa-calculator"></i></div><span>Feature Engineering</span></div>
+          <div class="pipe-step" data-step="2"><div class="pipe-icon"><i class="fa-solid fa-gauge-high"></i></div><span>Heuristic Scoring</span></div>
+          <div class="pipe-step" data-step="3"><div class="pipe-icon"><i class="fa-solid fa-newspaper"></i></div><span>News Analysis</span></div>
+          <div class="pipe-step" data-step="4"><div class="pipe-icon"><i class="fa-solid fa-filter"></i></div><span>Recommendation</span></div>
+          <div class="pipe-step" data-step="5"><div class="pipe-icon"><i class="fa-solid fa-network-wired"></i></div><span>Optimization</span></div>
+        </div>
+        <div class="pipeline-bar"><div class="pipeline-bar-fill" id="pipelineBarFill"></div></div>
+      </section>
+
+      <div class="info-box" id="infoBox">
+        <i class="fa-solid fa-circle-info"></i>&nbsp; Configure the Investor Profile in the sidebar, then click <strong>Run AI Pipeline</strong> to evaluate assets.
+      </div>
+
+      <div class="results-section" id="resultsSection" style="display:none;">
+
+        <div class="success-box" id="successBox"></div>
+
+        <section class="kpi-grid" id="kpiGrid">
+          <div class="kpi-card kpi-blue">
+            <div class="kpi-icon"><i class="fa-solid fa-list-check"></i></div>
+            <div class="kpi-meta"><div class="kpi-label">Assets Analyzed</div><div class="kpi-value" data-counter="0" id="kpiAnalyzed">0</div></div>
+          </div>
+          <div class="kpi-card kpi-green">
+            <div class="kpi-icon"><i class="fa-solid fa-circle-check"></i></div>
+            <div class="kpi-meta"><div class="kpi-label">Approved</div><div class="kpi-value" id="kpiApproved">0</div></div>
+          </div>
+          <div class="kpi-card kpi-red">
+            <div class="kpi-icon"><i class="fa-solid fa-circle-xmark"></i></div>
+            <div class="kpi-meta"><div class="kpi-label">Rejected</div><div class="kpi-value" id="kpiRejected">0</div></div>
+          </div>
+          <div class="kpi-card kpi-amber">
+            <div class="kpi-icon"><i class="fa-solid fa-trophy"></i></div>
+            <div class="kpi-meta"><div class="kpi-label">Portfolio Score</div><div class="kpi-value" id="kpiScore">0</div></div>
+          </div>
+          <div class="kpi-card kpi-violet">
+            <div class="kpi-icon"><i class="fa-solid fa-sack-dollar"></i></div>
+            <div class="kpi-meta"><div class="kpi-label">Capital (USD)</div><div class="kpi-value" id="kpiCapital">0</div></div>
+          </div>
+          <div class="kpi-card kpi-teal">
+            <div class="kpi-icon"><i class="fa-solid fa-microchip"></i></div>
+            <div class="kpi-meta"><div class="kpi-label">Winning Algorithm</div><div class="kpi-value small-val" id="kpiAlgo">—</div></div>
+          </div>
+        </section>
+
+        <section class="card-block">
+          <div class="block-header">
+            <h2><i class="fa-solid fa-table-cells"></i> Asset Evaluation Matrix</h2>
+            <p>Explainable AI scoring across 5 pillars · Global Markets</p>
+          </div>
+          <div class="asset-grid" id="assetGrid"></div>
+        </section>
+
+        <section class="card-block">
+          <div class="block-header">
+            <h2><i class="fa-solid fa-list"></i> Recommendation Engine Results</h2>
+          </div>
+          <div class="tables-row">
+            <div class="table-card approved">
+              <h3><i class="fa-solid fa-circle-check"></i> Approved Assets</h3>
+              <table class="data-table" id="approvedTable">
+                <thead><tr><th>Ticker</th><th>Score</th><th>Reason</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <div class="table-card rejected">
+              <h3><i class="fa-solid fa-circle-xmark"></i> Rejected Assets</h3>
+              <table class="data-table" id="rejectedTable">
+                <thead><tr><th>Ticker</th><th>Score</th><th>XAI Reason</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="card-block">
+          <div class="block-header">
+            <h2><i class="fa-solid fa-network-wired"></i> Portfolio Optimization Engine</h2>
+            <p>Local search (Hill Climbing) vs. probabilistic search (Simulated Annealing)</p>
+          </div>
+          <div class="opt-row">
+            <div class="opt-card">
+              <div class="opt-head"><h3>Hill Climbing</h3><span class="opt-tag">Local Optimum</span></div>
+              <div class="opt-score"><span id="hcScore">—</span><small>Portfolio Score</small></div>
+              <ul class="opt-weights" id="hcWeights"></ul>
+            </div>
+            <div class="opt-card winner">
+              <div class="opt-head"><h3>Simulated Annealing</h3><span class="opt-tag winner-tag"><i class="fa-solid fa-crown"></i> Winner · Global Maximum</span></div>
+              <div class="opt-score"><span id="saScore">—</span><small>Portfolio Score</small></div>
+              <div class="doughnut-wrap"><canvas id="allocationDoughnut"></canvas></div>
+              <ul class="opt-weights" id="saWeights"></ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="card-block">
+          <div class="block-header"><h2><i class="fa-solid fa-chart-pie"></i> Visual Analytics</h2></div>
+          <div class="chart-row">
+            <div class="chart-card"><h3>Target Asset Allocation</h3><div id="pieChart"></div></div>
+            <div class="chart-card"><h3>Sector Distribution</h3><div id="barChart"></div></div>
+          </div>
+          <div class="chart-row">
+            <div class="chart-card"><h3>5-Year Projected Growth</h3><div id="lineChart"></div></div>
+            <div class="chart-card"><h3>Risk vs Return Tradeoff</h3><div id="scatterChart"></div></div>
+          </div>
+        </section>
+
+        <section class="card-block">
+          <div class="chart-row chart-row-asymmetric">
+            <div class="chart-card">
+              <h3><i class="fa-solid fa-scale-balanced"></i> Algorithm Comparison</h3>
+              <table class="comp-table">
+                <thead><tr><th>Metric</th><th>Hill Climbing</th><th>Simulated Annealing</th></tr></thead>
+                <tbody id="compBody"></tbody>
+              </table>
+              <p class="table-caption">Simulated Annealing escapes local optima via probabilistic temperature cooling.</p>
+            </div>
+            <div class="chart-card explainability-card">
+              <h3><i class="fa-solid fa-brain"></i> AI Explainability Module</h3>
+              <div class="explain-box" id="explainBox"></div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+ <div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-card">
+    <div class="dancing-shapes">
+      <div class="morph-shadow"></div>
+      <div class="morph-shape"></div>
+    </div>
+    <div class="loading-title">Running AI Pipeline</div>
+    <div class="loading-stage" id="loadingStage">Initializing…</div>
+  </div>
+</div>
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
